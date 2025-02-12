@@ -4,13 +4,7 @@ import {
   RainbowKitProvider,
 } from '@rainbow-me/rainbowkit';
 import { WagmiProvider } from 'wagmi';
-import {
-  mainnet,
-  polygon,
-  optimism,
-  arbitrum,
-  base,
-} from 'wagmi/chains';
+import { avalanche , avalancheFuji} from 'wagmi/chains';
 import {
   QueryClientProvider,
   QueryClient,
@@ -19,8 +13,8 @@ import {
 const config = getDefaultConfig({
   appName: 'My RainbowKit App',
   projectId: 'YOUR_PROJECT_ID',
-  chains: [mainnet, polygon, optimism, arbitrum, base],
-  ssr: true, // If your dApp uses server side rendering (SSR)
+  chains: [avalanche,avalancheFuji],
+  ssr: false, 
 });
 
 const queryClient = new QueryClient();
