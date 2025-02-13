@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { Brain, TrendingUp, AlertCircle, ArrowDownToLine, BellRing } from 'lucide-react';
 import Navbar from '../components/Navbar';
-import { useWriteContract } from 'wagmi';
+import { useReadContract, useWaitForTransactionReceipt, useWriteContract } from 'wagmi';
+import { ABI, contractAddress } from '../utils/contractDetails';
+import { parseEther } from 'viem';
 
 interface Prediction {
   id: number;
@@ -31,6 +33,14 @@ function Questions() {
 
   const [bets, setBets] = useState<Record<number, { yes: string; no: string }>>({});
   const [showAiAnalysis, setShowAiAnalysis] = useState<Record<number, boolean>>({});
+//   const {writeContract , data : hash} = useWriteContract({})
+//   const {isPending , isSuccess , isError} = useWaitForTransactionReceipt({hash});
+
+//   const {data , isPending , isSuccess} = useReadContract({
+//     abi : ABI,
+//     address : contractAddress,
+//     functionName : "",
+//   })
   
   const handleBetChange = (predictionId: number, type: 'yes' | 'no', value: string) => {
     setBets(prev => ({
@@ -50,7 +60,12 @@ function Questions() {
   };
 
   const subscribeHandler = async() => {
-
+    // writeContract({
+    //     abi : ABI,
+    //     address : contractAddress,
+    //     functionName : "",
+    //     value : parseEther("0.1")
+    // })
   }
 
   return (

@@ -1,7 +1,20 @@
 import { TrendingUp, Wallet, ListFilter, Settings } from 'lucide-react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { useAccount, useReadContract } from 'wagmi';
+import { ABI, contractAddress } from '../utils/contractDetails';
+
 
 function Navbar() {
+
+    // const {address} = useAccount();
+
+    // const {data , isSuccess , isPending} = useReadContract({
+    //     abi : ABI,
+    //     address : contractAddress,
+    //     functionName : "",
+    //     account : address
+    // })
+
   return (
     <nav className="bg-gray-800 border-b border-gray-700">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Brain, TrendingUp, AlertCircle, ArrowDownToLine, BellRing, Wallet } from 'lucide-react';
 import MyBets from './MyBets';
 import Navbar from '../components/Navbar';
