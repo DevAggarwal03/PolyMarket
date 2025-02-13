@@ -1,7 +1,8 @@
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 const Navbar = () => {
     return <div>
-        hello
+        <ConnectButton />
     </div>
 }
 
