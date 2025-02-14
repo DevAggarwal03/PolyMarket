@@ -80,6 +80,18 @@ contract PredictionMarket {
         return owner;
     }
 
+    function isOwner() public view returns (bool) {
+        return msg.sender == owner;
+    }
+
+    function getAllQuestions() public view returns (Question[] memory) {
+        Question[] memory questions = new Question[](totalQuestions);
+        for (uint256 i = 1; i <= totalQuestions; i++) {
+            questions[i - 1] = idToQuestion[i];
+        }
+        return questions;
+    }
+
     function subscribeAgent() public payable {
         require(
             msg.value >= subscriptionFee,
@@ -99,8 +111,8 @@ contract PredictionMarket {
         emit AgentSubscribed(msg.sender, totalAgents);
     }
 
-    function isSubscribed(address _walletAddress) public view returns (bool) {
-        return userToAgent[_walletAddress].isAcitve;
+    function isSubscribed() public view returns (bool) {
+        return userToAgent[msg.sender].isAcitve;
     }
 
     function renewSubscription() public payable {

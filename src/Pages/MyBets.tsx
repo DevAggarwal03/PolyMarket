@@ -1,5 +1,8 @@
 import React from 'react';
 import { TrendingUp, ArrowDownToLine, Brain, AlertCircle, ArrowUpRight, Clock } from 'lucide-react';
+import { ABI, contractAddress } from '../utils/contractDetails';
+import { Abi } from 'viem';
+import { useAccount, useReadContracts } from 'wagmi';
 
 interface Bet {
   id: number;
@@ -14,7 +17,7 @@ interface Bet {
   aiAnalysis: string;
 }
 
-function MyBets() {
+function MyBets({allBetQuestions}: {allBetQuestions: any[]}) {
   const [bets] = React.useState<Bet[]>([
     {
       id: 1,
@@ -41,7 +44,7 @@ function MyBets() {
       aiAnalysis: "Recent technical setbacks suggest timeline delays are likely."
     }
   ]);
-
+  const {address} = useAccount();
   const [showAiAnalysis, setShowAiAnalysis] = React.useState<Record<number, boolean>>({});
 
   const toggleAiAnalysis = (betId: number) => {
@@ -50,6 +53,20 @@ function MyBets() {
       [betId]: !prev[betId]
     }));
   };
+
+  const contractsToRead = allBetQuestions ? allBetQuestions.map((question) => ({
+    address: contractAddress as `0x${string}`,
+    abi: ABI as Abi,
+    functionName: "addressToQuestionIdToAmt",
+    args: [address, BigInt(question.args[0])]
+  })) : []
+
+  const {data: allBetQuestionsData} = useReadContracts({
+    contracts: contractsToRead
+  })
+
+  console.log(allBetQuestionsData);
+  
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
