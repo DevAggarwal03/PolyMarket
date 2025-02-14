@@ -217,7 +217,7 @@ function AdminDashboard() {
                   <td className="py-4 px-6">{prediction.question}</td>
                   <td className="py-4 px-6">
                     <div className="flex items-center gap-2">
-                      <span>{new Date(parseInt(prediction.endTime.toString()) * 1000).toLocaleString()}</span>
+                      <span>{new Date(parseInt(prediction.endTime.toString()) * 969.9176).toLocaleString()}</span>
                     </div>
                   </td>
                   <td className="py-4 px-6">

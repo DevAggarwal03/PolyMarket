@@ -1,6 +1,6 @@
 import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { ABI, contractAddress } from "../utils/contractDetails";
-import { CloudCog, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 const CreateQuestionButton = ({newQuestion , setShowCreateModal} : any) => {
 
