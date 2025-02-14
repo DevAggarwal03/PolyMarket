@@ -96,7 +96,7 @@ function AdminDashboard() {
     return prediction.isActive === true ? selectedFilter === 'active' : selectedFilter === 'resolved';
   });
 
-  console.log((questions as unknown as any[])[0].yesVotes )
+  // console.log((questions as unknown as any[])[0].yesVotes )
 
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100">

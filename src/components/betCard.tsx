@@ -2,7 +2,7 @@ import { Brain, ArrowDownToLine, AlertCircle } from "lucide-react"
 import { useState } from "react";
 import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { ABI, contractAddress } from "../utils/contractDetails";
-import { parseEther } from "viem";
+import { formatEther, parseEther } from "viem";
 
 const BetCard = ({ prediction }: any) => {
 
@@ -67,7 +67,7 @@ const BetCard = ({ prediction }: any) => {
         <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                    <span>Yes Pool: ${prediction.yesVotes}</span>
+                    <span>Yes Pool: ${Number(formatEther(prediction.yesVotes)).toFixed(2)}</span>
                     <span className="text-green-400">Odds: {((parseInt(prediction.yesVotes.toString()) / (parseInt(prediction.yesVotes.toString()) + parseInt(prediction.noVotes.toString()))) * 100).toFixed(1)}%</span>
                 </div>
                 <div className="flex gap-2">
@@ -85,7 +85,7 @@ const BetCard = ({ prediction }: any) => {
             </div>
             <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                    <span>No Pool: ${prediction.noVotes}</span>
+                    <span>No Pool: ${Number(formatEther(prediction.noVotes)).toFixed(2)}</span>
                     <span className="text-red-400">Odds: {((parseFloat(prediction.noVotes.toString()) / (parseInt(prediction.yesVotes.toString()) + parseInt(prediction.noVotes.toString()))) * 100).toFixed(1)}%</span>
                 </div>
                 <div className="flex gap-2">
