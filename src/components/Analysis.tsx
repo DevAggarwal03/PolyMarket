@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { AlertCircle, Loader2 } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 import { Brain , ArrowDownToLine } from "lucide-react";
 import { useAccount, useReadContract } from "wagmi";
 import { ABI, contractAddress } from "../utils/contractDetails";
 import axios from "axios";
 
-const Analysis = ({id,coin, target_price , date} : {coin : string , id : number , target_price : number , date : number}) => {
+const Analysis = ({id,coin, target_price} : {coin : string , id : number , target_price : number , date : number}) => {
     const [showAiAnalysis, setShowAiAnalysis] = useState<Record<number, boolean>>({});
 
     const {address} = useAccount();

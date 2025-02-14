@@ -10,7 +10,7 @@ function UserBets() {
 
   const {address} = useAccount();
 
-  const {data , isPending , isSuccess} = useReadContracts({
+  const {data} = useReadContracts({
     contracts: [
       {
         address: contractAddress as `0x${string}`,

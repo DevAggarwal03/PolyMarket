@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { TrendingUp, Plus, X, Filter, Search, Calendar, DollarSign, Users, Activity, CheckCircle2, Clock } from 'lucide-react';
-import { useAccount, useReadContract, useWaitForTransactionReceipt, useWriteContract } from 'wagmi';
+import { useAccount, useReadContract } from 'wagmi';
 import { ABI, contractAddress } from '../utils/contractDetails';
 import CreateQuestionButton from '../components/CreateQuestionButton';
 import { formatEther } from 'viem';
@@ -93,10 +93,10 @@ function AdminDashboard() {
   };
 
   
-  const filteredPredictions = predictions.filter(prediction => {
-    if (selectedFilter === 'all') return true;
-    return prediction.isActive === true ? selectedFilter === 'active' : selectedFilter === 'resolved';
-  });
+  // const filteredPredictions = predictions.filter(prediction => {
+  //   if (selectedFilter === 'all') return true;
+  //   return prediction.isActive === true ? selectedFilter === 'active' : selectedFilter === 'resolved';
+  // });
 
   // console.log( ((questions as unknown as any[])[0].endTime).toString() )
 

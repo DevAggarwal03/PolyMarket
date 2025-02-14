@@ -12,8 +12,8 @@ const BetCard = ({ prediction }: any) => {
     const [yesbets, setYesBets] = useState<number>(0);
     const [nobets, setNoBets] = useState<number>(0);
 
-    const { writeContract, isPending, data: hash } = useWriteContract({});
-    const { isLoading, isSuccess } = useWaitForTransactionReceipt({ hash })
+    const { writeContract, data: hash } = useWriteContract({});
+    const { isLoading } = useWaitForTransactionReceipt({ hash })
 
     const noBetHandler = () => {
         if(nobets <= 0){
