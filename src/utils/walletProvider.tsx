@@ -4,8 +4,7 @@ import {
   RainbowKitProvider,
 } from '@rainbow-me/rainbowkit';
 import { WagmiProvider } from 'wagmi';
-import { SetTestnet } from './chainConfig';
-import { avalanche , avalancheFuji} from 'wagmi/chains';
+import { seiTestnet } from 'wagmi/chains';
 import {
   QueryClientProvider,
   QueryClient,
@@ -14,7 +13,7 @@ import {
 const config = getDefaultConfig({
   appName: 'My RainbowKit App',
   projectId: 'YOUR_PROJECT_ID',
-  chains: [avalanche,avalancheFuji,SetTestnet],
+  chains: [seiTestnet],
   ssr: false, 
 });
 
