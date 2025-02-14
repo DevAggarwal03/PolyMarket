@@ -1,51 +1,38 @@
 import React from 'react';
 import { TrendingUp, ArrowDownToLine, Brain, AlertCircle, ArrowUpRight, Clock } from 'lucide-react';
-import { ABI, contractAddress } from '../utils/contractDetails';
-import { Abi } from 'viem';
-import { useAccount, useReadContracts } from 'wagmi';
+import { formatEther, parseEther } from 'viem';
 
-interface Bet {
+// interface Bet {
+//   id: number;
+//   predictionId: number;
+//   question: string;
+//   betAmount: number;
+//   position: 'yes' | 'no';
+//   odds: number;
+//   potentialPayout: number;
+//   timestamp: string;
+//   status: 'active' | 'resolved' | 'withdrawn';
+//   aiAnalysis: string;
+// }
+
+export interface Bet {
   id: number;
-  predictionId: number;
   question: string;
-  betAmount: number;
-  position: 'yes' | 'no';
-  odds: number;
-  potentialPayout: number;
-  timestamp: string;
-  status: 'active' | 'resolved' | 'withdrawn';
-  aiAnalysis: string;
+  description: string;
+  endTime: number;
+  isActive: boolean;
+  cryptoCurrency: string;
+  targetPrice: number;
+  yesPool: number;
+  noPool: number;
+  userYesVotes: number;
+  userNoVotes: number;
 }
 
-function MyBets({allBetQuestions}: {allBetQuestions: any[]}) {
-  const [bets] = React.useState<Bet[]>([
-    {
-      id: 1,
-      predictionId: 1,
-      question: "Will Bitcoin reach $100,000 by the end of 2024?",
-      betAmount: 500,
-      position: 'yes',
-      odds: 0.65,
-      potentialPayout: 769.23,
-      timestamp: "2024-03-15T10:30:00Z",
-      status: 'active',
-      aiAnalysis: "Market sentiment remains bullish with strong institutional adoption trends."
-    },
-    {
-      id: 2,
-      predictionId: 2,
-      question: "Will SpaceX successfully land on Mars in 2024?",
-      betAmount: 200,
-      position: 'no',
-      odds: 0.70,
-      potentialPayout: 285.71,
-      timestamp: "2024-03-14T15:45:00Z",
-      status: 'active',
-      aiAnalysis: "Recent technical setbacks suggest timeline delays are likely."
-    }
-  ]);
-  const {address} = useAccount();
+function MyBets({betsByUser}: {betsByUser: Bet[]}) {
+  // const {address} = useAccount();
   const [showAiAnalysis, setShowAiAnalysis] = React.useState<Record<number, boolean>>({});
+  console.log(betsByUser);
 
   const toggleAiAnalysis = (betId: number) => {
     setShowAiAnalysis(prev => ({
@@ -53,43 +40,31 @@ function MyBets({allBetQuestions}: {allBetQuestions: any[]}) {
       [betId]: !prev[betId]
     }));
   };
-
-  const contractsToRead = allBetQuestions ? allBetQuestions.map((question) => ({
-    address: contractAddress as `0x${string}`,
-    abi: ABI as Abi,
-    functionName: "addressToQuestionIdToAmt",
-    args: [address, BigInt(question.args[0])]
-  })) : []
-
-  const {data: allBetQuestionsData} = useReadContracts({
-    contracts: contractsToRead
-  })
-
-  console.log(allBetQuestionsData);
   
+  // const formatDate = (dateString: bigint) => {
+  //   return new Date(Number(dateString));
+  // };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
-
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status: boolean) => {
     switch (status) {
-      case 'active':
+      case true:
         return 'text-green-400';
-      case 'resolved':
+      case false:
         return 'text-blue-400';
-      case 'withdrawn':
-        return 'text-gray-400';
       default:
         return 'text-gray-400';
     }
   };
+
+  const calculatePotentialPayout = (betAmount: number, yesPool: number, noPool: number) => {
+    console.log(betAmount, yesPool, noPool);
+    const totalPool = yesPool + noPool;
+    const yesOdds = yesPool / totalPool;
+    const noOdds = noPool / totalPool;
+    const payout = yesOdds > noOdds ? betAmount * yesOdds : betAmount * noOdds;
+    console.log(payout);
+    return formatEther(payout as unknown as bigint);
+  }
 
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100 p-8">
@@ -101,20 +76,14 @@ function MyBets({allBetQuestions}: {allBetQuestions: any[]}) {
           </h1>
           <div className="flex items-center gap-4">
             <div className="text-sm">
-              <span className="text-gray-400">Total Active Bets:</span>
-              <span className="ml-2 font-semibold">{bets.filter(bet => bet.status === 'active').length}</span>
-            </div>
-            <div className="text-sm">
               <span className="text-gray-400">Total Amount Staked:</span>
-              <span className="ml-2 font-semibold">
-                ${bets.reduce((sum, bet) => sum + bet.betAmount, 0)}
-              </span>
+              <span className="ml-2 font-semibold">{formatEther(((betsByUser[0].userYesVotes) + (betsByUser[0].userNoVotes)) as unknown as bigint)}</span>
             </div>
           </div>
         </div>
 
         <div className="space-y-6">
-          {bets.map(bet => (
+          {betsByUser.map((bet: Bet) => (
             <div key={bet.id} className="bg-gray-800 rounded-lg p-6">
               <div className="flex justify-between items-start mb-4">
                 <div className="space-y-1">
@@ -122,10 +91,10 @@ function MyBets({allBetQuestions}: {allBetQuestions: any[]}) {
                   <div className="flex items-center gap-4 text-sm text-gray-400">
                     <span className="flex items-center gap-1">
                       <Clock className="w-4 h-4" />
-                      {formatDate(bet.timestamp)}
+                      <span>{new Date(parseInt(bet.endTime.toString()) * 1000).toString()}</span>
                     </span>
-                    <span className={`capitalize ${getStatusColor(bet.status)}`}>
-                      • {bet.status}
+                    <span className={`capitalize ${getStatusColor(bet.isActive)}`}>
+                      • {bet.isActive ? 'Active' : 'Inactive'}
                     </span>
                   </div>
                 </div>
@@ -137,17 +106,17 @@ function MyBets({allBetQuestions}: {allBetQuestions: any[]}) {
               <div className="grid grid-cols-3 gap-6 mb-4">
                 <div className="bg-gray-700/50 p-4 rounded-lg">
                   <div className="text-sm text-gray-400 mb-1">Position</div>
-                  <div className={`font-semibold ${bet.position === 'yes' ? 'text-green-400' : 'text-red-400'}`}>
-                    {bet.position.toUpperCase()}
+                  <div className={`font-semibold ${bet.userYesVotes > bet.userNoVotes ? 'text-green-400' : 'text-red-400'}`}>
+                    {bet.userYesVotes > bet.userNoVotes ? 'yes' : 'no'}
                   </div>
                 </div>
                 <div className="bg-gray-700/50 p-4 rounded-lg">
                   <div className="text-sm text-gray-400 mb-1">Bet Amount</div>
-                  <div className="font-semibold">${bet.betAmount}</div>
+                  <div className="font-semibold">{formatEther(((bet.userYesVotes) + (bet.userNoVotes)) as unknown as bigint)}</div>
                 </div>
                 <div className="bg-gray-700/50 p-4 rounded-lg">
                   <div className="text-sm text-gray-400 mb-1">Potential Payout</div>
-                  <div className="font-semibold text-purple-400">${bet.potentialPayout}</div>
+                  {/* <div className="font-semibold text-purple-400">${calculatePotentialPayout(formatEther(((betsByUser[0].userYesVotes) + (betsByUser[0].userNoVotes)) as unknown as bigint), parseInt(bet.yesPool), parseInt(bet.noPool))}</div> */}
                 </div>
               </div>
 
@@ -161,7 +130,7 @@ function MyBets({allBetQuestions}: {allBetQuestions: any[]}) {
                 </button>
                 
                 <a 
-                  href={`/prediction/${bet.predictionId}`}
+                  href={`/prediction/${bet.id}`}
                   className="flex items-center gap-2 text-sm text-gray-400 hover:text-gray-300"
                 >
                   <span>View Prediction</span>
@@ -172,7 +141,7 @@ function MyBets({allBetQuestions}: {allBetQuestions: any[]}) {
               {showAiAnalysis[bet.id] && (
                 <div className="mt-4 bg-gray-700 p-4 rounded-lg flex items-start gap-3">
                   <AlertCircle className="w-5 h-5 text-purple-400 flex-shrink-0 mt-1" />
-                  <p className="text-sm text-gray-300">{bet.aiAnalysis}</p>
+                  {/* <p className="text-sm text-gray-300">{bet.aiAnalysis}</p> */}
                 </div>
               )}
             </div>

@@ -4,6 +4,8 @@ import { useAccount, useReadContract, useWaitForTransactionReceipt, useWriteCont
 import { ABI, contractAddress } from '../utils/contractDetails';
 import CreateQuestionButton from '../components/CreateQuestionButton';
 import { formatEther } from 'viem';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { Link } from 'react-router-dom';
 
 interface Prediction {
   id: number;
@@ -105,16 +107,21 @@ function AdminDashboard() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2">
-              <TrendingUp className="w-8 h-8 text-purple-500" />
-              <h1 className="text-2xl font-bold">Admin Dashboard</h1>
+              <Link to={"/"} className='flex gap-x-2'>
+                <TrendingUp className="w-8 h-8 text-purple-500" />
+                <h1 className="text-2xl font-bold">Admin Dashboard</h1>
+              </Link>
             </div>
-            <button
-              onClick={() => setShowCreateModal(true)}
-              className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg transition-colors"
-            >
-              <Plus className="w-5 h-5" />
-              Create Question
-            </button>
+            <div className='flex gap-x-3'>  
+              <button
+                onClick={() => setShowCreateModal(true)}
+                className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg transition-colors"
+              >
+                <Plus className="w-5 h-5" />
+                Create Question
+              </button>
+              <ConnectButton/>
+            </div>
           </div>
         </div>
       </div>

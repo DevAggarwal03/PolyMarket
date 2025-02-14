@@ -48,6 +48,12 @@ contract PredictionMarket {
 
     mapping(uint256 => uint256) public questionTargetPrices;
 
+    struct QuestionAmount {
+        uint256 questionId;
+        uint256 yesVotes;
+        uint256 noVotes;
+    }
+
     // Events
     event AgentSubscribed(address indexed agent, uint256 id);
     event AgentRenewed(address indexed agent, uint256 id);
@@ -299,6 +305,19 @@ contract PredictionMarket {
         isQuestionResolved[_questionId] = true;
 
         emit WinnerDeclared(_questionId, outcome);
+    }
+
+    function getAddressQuestionAmounts(address _address) public view returns (QuestionAmount[] memory) {
+        QuestionAmount[] memory amounts = new QuestionAmount[](totalQuestions);
+        for (uint256 i = 1; i <= totalQuestions; i++) {
+            holdingAmt memory holding = addressToQuestionIdToAmt[_address][i];
+            amounts[i - 1] = QuestionAmount({
+                questionId: i,
+                yesVotes: holding.yesVotes,
+                noVotes: holding.noVotes
+            });
+        }
+        return amounts;
     }
 
     // function updatePriceFeedAddress(

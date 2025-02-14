@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Brain, TrendingUp, AlertCircle, ArrowDownToLine, BellRing, Wallet } from 'lucide-react';
 import MyBets from './MyBets';
 import Navbar from '../components/Navbar';
@@ -12,6 +12,8 @@ interface Prediction {
   noPool: number;
   aiAnalysis: string;
 }
+import { Bet } from './MyBets';
+
 
 function UserBets() {
   const [showMyBets, setShowMyBets] = useState(false);
@@ -32,43 +34,44 @@ function UserBets() {
     }
   ]);
 
-  const [bets, setBets] = useState<Record<number, { yes: string; no: string }>>({});
+  const [bets, setBets] = useState<Bet[] | []>([]);
   const [showAiAnalysis, setShowAiAnalysis] = useState<Record<number, boolean>>({});
   const {address} = useAccount();
 
-  const {data: userBets} = useReadContract({
-    address: contractAddress,
-    abi: ABI,
-    functionName: "addressToQuestionIdToAmt",
-    args: [address]
-  })
-  
-  console.log(userBets);
-  
-  const {data: questions} = useReadContract({
-    address: contractAddress,
-    abi: ABI,
-    functionName: "idToQuestion",
-    args: [BigInt(1)]
-  })
-  
-  console.log(questions);
-
-
-  // let userBets be an array of objects with key as questionId and value as an object with keys yes and no
- 
-  const contractsToRead = userBets ? Object.keys(userBets as unknown as Record<string, any>).map((questionId) => ({
-    address: contractAddress as `0x${string}`,
-    abi: ABI as Abi,
-    functionName: "idToQuestion",
-    args: [BigInt(questionId)]
-  })) : []
-
-  const {data: allBetQuestions} = useReadContracts({
-    contracts: contractsToRead
+  const {data , isPending , isSuccess} = useReadContracts({
+    contracts: [
+      {
+        address: contractAddress as `0x${string}`,
+        abi: ABI as Abi,
+        functionName: "getAddressQuestionAmounts",
+        args: [address]
+      },
+      {
+        address: contractAddress as `0x${string}`,
+        abi: ABI as Abi,
+        functionName: "getAllQuestions",
+        args: []
+      }
+    ]
   })
 
-  console.log(allBetQuestions);
+  console.log("All user bets:", data?.[0]);
+  console.log("All questions:", data?.[1]);
+
+  const betsByUser : Bet[] = data ? (data[0].result as any[]).map((bet) => {
+    const matchingQuestion = (data[1].result as any[]).find(
+      (question) => question.id === bet.questionId
+    );
+    if(matchingQuestion){
+      return {
+        userYesVotes : bet.yesVotes,
+        userNoVotes : bet.noVotes,
+        ...matchingQuestion
+      }
+    }
+  }) : [];
+
+  console.log(betsByUser);
   
 
   const handleBetChange = (predictionId: number, type: 'yes' | 'no', value: string) => {
@@ -88,10 +91,16 @@ function UserBets() {
     }));
   };
 
+  
+
   return (
     <>
     <Navbar/>
-    <MyBets allBetQuestions={allBetQuestions as any[]}/>
+    {
+      betsByUser.length > 0 && (
+        <MyBets betsByUser={betsByUser}/>
+      )
+    }
     </>
   );
 }

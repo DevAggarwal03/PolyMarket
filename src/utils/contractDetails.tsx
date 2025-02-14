@@ -1,4 +1,4 @@
-export const contractAddress = "0x66BFc0dcFADf1591Bcc3b7224CAD01f2DcD4a346";
+export const contractAddress = "0xc7AEBa51561320aa7A2135D579326BDef0268C00";
 export const ABI = [
   {
     "inputs": [],
@@ -216,6 +216,42 @@ export const ABI = [
     "name": "createQuestion",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_address",
+        "type": "address"
+      }
+    ],
+    "name": "getAddressQuestionAmounts",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "questionId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "yesVotes",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "noVotes",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct PredictionMarket.QuestionAmount[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {

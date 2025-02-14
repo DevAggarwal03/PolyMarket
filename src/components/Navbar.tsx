@@ -2,6 +2,7 @@ import { TrendingUp, Wallet, ListFilter, Settings } from 'lucide-react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useAccount, useReadContract } from 'wagmi';
 import { ABI, contractAddress } from '../utils/contractDetails';
+import { Link } from 'react-router-dom';
 
 function Navbar() {
 
@@ -22,8 +23,10 @@ function Navbar() {
               {/* Logo and Brand */}
               <div className="flex items-center">
                 <div className="flex items-center gap-2 cursor-pointer" onClick={() => {}}>
-                  <TrendingUp className="w-8 h-8 text-purple-500" />
-                  <span className="text-xl font-bold text-white">PredictX</span>
+                  <Link to={"/"} className='flex gap-x-2'>
+                    <TrendingUp className="w-8 h-8 text-purple-500" />
+                    <span className="text-xl font-bold text-white">PredictX</span>
+                  </Link>
                 </div>
                 
                 {/* Navigation Links */}
@@ -33,20 +36,20 @@ function Navbar() {
                       onClick={() => {}}
                       className={`px-3 py-2 rounded-md text-sm font-medium transition-colors`}
                     >
-                      <div className="flex items-center gap-2">
+                      <Link to={"/user"} className="flex items-center gap-2">
                         <ListFilter className="w-4 h-4" />
                         Questions
-                      </div>
+                      </Link>
                     </button>
     
                     <button
                       onClick={() => {}}
                       className={`px-3 py-2 rounded-md text-sm font-medium transition-colors`}
                     >
-                      <div className="flex items-center gap-2">
+                      <Link to={'/userbets'} className="flex items-center gap-2">
                         <Wallet className="w-4 h-4" />
                         My Bets
-                      </div>
+                      </Link>
                     </button>
                   </div>
                 </div>
@@ -59,8 +62,10 @@ function Navbar() {
                   onClick={() => {}}
                   className="flex items-center gap-2 bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-lg text-sm font-medium text-white transition-colors"
                 >
-                  <Settings className="w-4 h-4" />
-                  Admin
+                  <Link to={"/admin"} className="flex items-center gap-2">
+                    <Settings className="w-4 h-4" />
+                    Admin
+                  </Link>
                 </button>
               </div>
             </div>
@@ -73,19 +78,19 @@ function Navbar() {
                 onClick={() => {}}
                 className={`w-full px-3 py-2 rounded-md text-sm font-medium transition-colors `}
               >
-                <div className="flex items-center gap-2">
+                <Link to={"/user"} className="flex items-center gap-2">
                   <ListFilter className="w-4 h-4" />
                   Questions
-                </div>
+                </Link>
               </button>
               <button
                 onClick={() => {}}
                 className={`w-full px-3 py-2 rounded-md text-sm font-medium transition-colors`}
               >
-                <div className="flex items-center gap-2">
+                <Link to={'/userbets'} className="flex items-center gap-2">
                   <Wallet className="w-4 h-4" />
                   My Bets
-                </div>
+                </Link>
               </button>
             </div>
           </div>
@@ -100,8 +105,10 @@ function Navbar() {
               {/* Logo and Brand */}
               <div className="flex items-center">
                 <div className="flex items-center gap-2 cursor-pointer" onClick={() => {}}>
-                  <TrendingUp className="w-8 h-8 text-purple-500" />
-                  <span className="text-xl font-bold text-white">PredictX</span>
+                  <Link to={"/"} className='flex gap-x-2'>
+                    <TrendingUp className="w-8 h-8 text-purple-500" />
+                    <span className="text-xl font-bold text-white">PredictX</span>
+                  </Link>
                 </div>
                 
                 {/* Navigation Links */}
@@ -111,20 +118,20 @@ function Navbar() {
                       onClick={() => {}}
                       className={`px-3 py-2 rounded-md text-sm font-medium transition-colors`}
                     >
-                      <div className="flex items-center gap-2">
+                      <Link to={"/user"} className="flex items-center gap-2">
                         <ListFilter className="w-4 h-4" />
                         Questions
-                      </div>
+                      </Link>
                     </button>
     
                     <button
                       onClick={() => {}}
                       className={`px-3 py-2 rounded-md text-sm font-medium transition-colors`}
                     >
-                      <div className="flex items-center gap-2">
+                      <Link to={'/userbets'} className="flex items-center gap-2">
                         <Wallet className="w-4 h-4" />
                         My Bets
-                      </div>
+                      </Link>
                     </button>
                   </div>
                 </div>
@@ -144,19 +151,19 @@ function Navbar() {
                 onClick={() => {}}
                 className={`w-full px-3 py-2 rounded-md text-sm font-medium transition-colors `}
               >
-                <div className="flex items-center gap-2">
+                <Link to={"/user"} className="flex items-center gap-2">
                   <ListFilter className="w-4 h-4" />
                   Questions
-                </div>
+                </Link>
               </button>
               <button
                 onClick={() => {}}
                 className={`w-full px-3 py-2 rounded-md text-sm font-medium transition-colors`}
               >
-                <div className="flex items-center gap-2">
+                <Link to={'/userbets'} className="flex items-center gap-2">
                   <Wallet className="w-4 h-4" />
                   My Bets
-                </div>
+                </Link>
               </button>
             </div>
           </div>
