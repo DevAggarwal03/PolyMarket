@@ -4,8 +4,8 @@ import Home from './Pages/Home'
 import Questions from './Pages/userHome'
 import UserBets from './Pages/userBets'
 import AdminDashboard from './Pages/AdminPage'
-function App() {
 
+function App() {
   return (
     <>
       <Routes>
@@ -18,4 +18,4 @@ function App() {
   )
 }
 
-export default App
+export default App;
