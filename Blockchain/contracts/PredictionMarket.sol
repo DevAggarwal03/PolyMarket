@@ -151,8 +151,8 @@ contract PredictionMarket {
             question: _question,
             description: _description,
             endTime: block.timestamp + _endTime,
-            yesVotes: 1,
-            noVotes: 1,
+            yesVotes: 1 * 10 ** 18,
+            noVotes: 1 * 10 ** 18,
             isActive: true,
             cryptoCurrency: _cryptoCurrency
         });
@@ -189,7 +189,7 @@ contract PredictionMarket {
         require(msg.value > 0, "Amount must be greater than 0");
 
         Question storage question = idToQuestion[_questionId];
-        uint256 betAmount = msg.value;
+        uint256 betAmount = msg.value * 10 ** 18;
 
         if (_vote) {
             // For YES votes
@@ -245,23 +245,19 @@ contract PredictionMarket {
             if (_vote) {
                 require(
                     addressToQuestionIdToAmt[msg.sender][_questionId]
-                        .yesVotes >= _amount,
+                        .yesVotes >= _amount * 10 ** 18,
                     "Insufficient yes votes"
                 );
                 addressToQuestionIdToAmt[msg.sender][_questionId]
-                    .yesVotes -= _amount;
+                    .yesVotes -= _amount * 10 ** 18;
             } else {
-                require(
-                    addressToQuestionIdToAmt[msg.sender][_questionId].noVotes >=
-                        _amount,
-                    "Insufficient no votes"
-                );
+                require( addressToQuestionIdToAmt[msg.sender][_questionId].noVotes >=_amount * 10 ** 18, "Insufficient no votes" );
                 addressToQuestionIdToAmt[msg.sender][_questionId]
-                    .noVotes -= _amount;
+                    .noVotes -= _amount * 10 ** 18;
             }
 
             // Calculate payout based on proportion of winning pool
-            uint256 payout = (_amount * totalPool) / winningPool;
+            uint256 payout = (_amount * 10 ** 18 * totalPool) / winningPool;
             require(
                 address(this).balance >= payout,
                 "Insufficient contract balance"

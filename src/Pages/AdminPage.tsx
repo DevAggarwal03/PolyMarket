@@ -1,25 +1,24 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { TrendingUp, Plus, X, Filter, Search, Calendar, DollarSign, Users, Activity, CheckCircle2, Clock, AlertTriangle } from 'lucide-react';
-import { useWaitForTransactionReceipt, useWriteContract } from 'wagmi';
+import { useAccount, useReadContract, useWaitForTransactionReceipt, useWriteContract } from 'wagmi';
 import { ABI, contractAddress } from '../utils/contractDetails';
 import CreateQuestionButton from '../components/CreateQuestionButton';
+import { formatEther } from 'viem';
 
 interface Prediction {
   id: number;
   question: string;
-  startDate: string;
-  endDate: string;
-  status: 'active' | 'resolved' | 'cancelled';
-  yesPool: number;
-  noPool: number;
-  totalBets: number;
-  resolution?: 'yes' | 'no';
-  cryptoCurrency : string
+  cryptoCurrency: string;
+  endTime: number;
+  isActive: boolean;
+  description: string;
+  yesVotes: number;
+  noVotes: number;
 }
 
 function AdminDashboard() {
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [predictions] = useState<Prediction[]>([]);
+  const [predictions, setPredictions] = useState<Prediction[]>([]);
 
   const [newQuestion, setNewQuestion] = useState({
     question: '',
@@ -29,30 +28,42 @@ function AdminDashboard() {
     cryptoCurrency : '',
     targetPrice : '',
   });
-
+  const {address} = useAccount();
   const [selectedFilter, setSelectedFilter] = useState('all');
 
-  const getStatusColor = (status: string) => {
+  const {data: questions} = useReadContract({
+    address: contractAddress,
+    abi: ABI,
+    functionName: "getAllQuestions",
+    args: [],
+    account: address,
+  })
+
+  console.log(questions);
+
+  useEffect(() => {
+    if (questions) {
+      setPredictions(questions as unknown as Prediction[]);
+    }
+  }, [questions]);
+
+  const getStatusColor = (status: boolean) => {
     switch (status) {
-      case 'active':
+      case true:
         return 'text-green-400';
-      case 'resolved':
+      case false:
         return 'text-blue-400';
-      case 'cancelled':
-        return 'text-red-400';
       default:
         return 'text-gray-400';
     }
   };
 
-  const getStatusIcon = (status: string) => {
+  const getStatusIcon = (status: boolean) => {
     switch (status) {
-      case 'active':
+      case true:
         return <Activity className="w-4 h-4" />;
-      case 'resolved':
+      case false:
         return <CheckCircle2 className="w-4 h-4" />;
-      case 'cancelled':
-        return <AlertTriangle className="w-4 h-4" />;
       default:
         return <Clock className="w-4 h-4" />;
     }
@@ -82,8 +93,10 @@ function AdminDashboard() {
   
   const filteredPredictions = predictions.filter(prediction => {
     if (selectedFilter === 'all') return true;
-    return prediction.status === selectedFilter;
+    return prediction.isActive === true ? selectedFilter === 'active' : selectedFilter === 'resolved';
   });
+
+  console.log((questions as unknown as any[])[0].yesVotes )
 
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100">
@@ -128,7 +141,7 @@ function AdminDashboard() {
               <div>
                 <p className="text-sm text-gray-400">Active Questions</p>
                 <p className="text-2xl font-bold">
-                  {predictions.filter(p => p.status === 'active').length}
+                  {predictions.filter(p => p.isActive === true).length}
                 </p>
               </div>
             </div>
@@ -152,7 +165,7 @@ function AdminDashboard() {
               <div>
                 <p className="text-sm text-gray-400">Resolved Questions</p>
                 <p className="text-2xl font-bold">
-                  {predictions.filter(p => p.status === 'resolved').length}
+                  {predictions.filter(p => p.isActive === false).length}
                 </p>
               </div>
             </div>
@@ -180,7 +193,6 @@ function AdminDashboard() {
                 <option value="all">All Status</option>
                 <option value="active">Active</option>
                 <option value="resolved">Resolved</option>
-                <option value="cancelled">Cancelled</option>
               </select>
             </div>
           </div>
@@ -192,7 +204,7 @@ function AdminDashboard() {
             <thead>
               <tr className="border-b border-gray-700">
                 <th className="text-left py-4 px-6">Question</th>
-                <th className="text-left py-4 px-6">Date Range</th>
+                <th className="text-left py-4 px-6">End Date</th>
                 <th className="text-left py-4 px-6">Status</th>
                 <th className="text-left py-4 px-6">Pool Size</th>
                 <th className="text-left py-4 px-6">Total Bets</th>
@@ -200,31 +212,28 @@ function AdminDashboard() {
               </tr>
             </thead>
             <tbody>
-              {filteredPredictions.map(prediction => (
+              {(questions as unknown as Prediction[])?.map(prediction => (
                 <tr key={prediction.id} className="border-b border-gray-700 hover:bg-gray-750">
                   <td className="py-4 px-6">{prediction.question}</td>
                   <td className="py-4 px-6">
                     <div className="flex items-center gap-2">
-                      <Calendar className="w-4 h-4 text-gray-400" />
-                      <span>{prediction.startDate}</span>
-                      <span className="text-gray-500">→</span>
-                      <span>{prediction.endDate}</span>
+                      <span>{new Date(parseInt(prediction.endTime.toString()) * 500).toLocaleString()}</span>
                     </div>
                   </td>
                   <td className="py-4 px-6">
-                    <div className={`flex items-center gap-2 ${getStatusColor(prediction.status)}`}>
-                      {getStatusIcon(prediction.status)}
-                      <span className="capitalize">{prediction.status}</span>
+                    <div className={`flex items-center gap-2 ${getStatusColor(prediction.isActive)}`}>
+                      {getStatusIcon(prediction.isActive)}
+                      <span className="capitalize">{prediction.isActive ? 'Active' : 'Resolved'}</span>
                     </div>
                   </td>
                   <td className="py-4 px-6">
-                    {formatCurrency(prediction.yesPool + prediction.noPool)}
+                    $ {formatEther(parseInt(prediction.yesVotes.toString()) + parseInt(prediction.noVotes.toString()) as unknown as bigint)}
                   </td>
-                  <td className="py-4 px-6">{prediction.totalBets}</td>
+                  <td className="py-4 px-6">{formatEther(prediction.yesVotes as unknown as bigint)} / {formatEther(prediction.noVotes as unknown as bigint)}</td>
                   <td className="py-4 px-6">
-                    {prediction.resolution ? (
-                      <span className={`capitalize ${prediction.resolution === 'yes' ? 'text-green-400' : 'text-red-400'}`}>
-                        {prediction.resolution}
+                    {parseInt(prediction.yesVotes.toString()) > parseInt(prediction.noVotes.toString()) ? (
+                      <span className={`capitalize ${(parseInt(prediction.yesVotes.toString()) > parseInt(prediction.noVotes.toString())) ? 'text-green-400' : 'text-red-400'}`}>
+                        {parseInt(prediction.yesVotes.toString())}
                       </span>
                     ) : (
                       <span className="text-gray-400">Pending</span>
