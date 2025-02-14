@@ -1,6 +1,9 @@
-import { TrendingUp, ArrowDownToLine,Clock } from 'lucide-react';
-import { formatEther } from 'viem';
+import React from 'react';
+import { TrendingUp, ArrowDownToLine, Clock } from 'lucide-react';
+import { Abi, formatEther, parseEther } from 'viem';
 import Analysis from '../components/Analysis';
+import { useWaitForTransactionReceipt, useWriteContract } from 'wagmi';
+import { contractAddress, ABI } from '../utils/contractDetails';
 
 export interface Bet {
   id: number;
@@ -17,6 +20,11 @@ export interface Bet {
 }
 
 function MyBets({betsByUser}: {betsByUser: Bet[]}) {
+  // const {address} = useAccount();
+  const [withdrawalAmounts, setWithdrawalAmounts] = React.useState<{withdrawalAmount: string, betId: number, vote: boolean}>({withdrawalAmount: "", betId: 0, vote: true});
+  const {writeContract, data: hash} = useWriteContract();
+  // const {address} = useAccount();
+  const {} = useWaitForTransactionReceipt({hash});
   console.log(betsByUser);
 
   const getStatusColor = (status: boolean) => {
@@ -29,6 +37,31 @@ function MyBets({betsByUser}: {betsByUser: Bet[]}) {
         return 'text-gray-400';
     }
   };
+
+  const handleWithdrawalAmountChange = (e: React.ChangeEvent<HTMLInputElement>, betId: number) => {
+    setWithdrawalAmounts(prev => ({
+      ...prev,
+      withdrawalAmount: e.target.value,
+      betId: betId
+    }));
+  }
+
+  const handleWithdrawalVoteChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setWithdrawalAmounts(prev => ({
+      ...prev,
+      vote: e.target.value === "yes" ? true : false
+    }));
+  }
+
+  const withdrawBet = () => {
+    console.log(withdrawalAmounts);
+    writeContract({
+      address: contractAddress as `0x${string}`,
+      abi: ABI as Abi,
+      functionName: "withdrawBets",
+      args: [parseInt(withdrawalAmounts.betId.toString()), parseEther(withdrawalAmounts.withdrawalAmount), withdrawalAmounts.vote]
+    })
+  }
 
   const calculatePotentialPayout = (totalYes: number, totalNo: number, userYesTokens : number , userNoTokens : number) => {
 
@@ -74,10 +107,29 @@ function MyBets({betsByUser}: {betsByUser: Bet[]}) {
                     </span>
                   </div>
                 </div>
-                <button className="flex items-center gap-2 text-sm bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded transition-colors">
-                  <ArrowDownToLine className="w-4 h-4" />
-                  Withdraw Bet
-                </button>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    value={withdrawalAmounts.withdrawalAmount}
+                    onChange={(e) => handleWithdrawalAmountChange(e, bet.id)}
+                    className="w-24 px-2 py-1 text-sm bg-gray-700 rounded border border-gray-600 text-white"
+                    placeholder="Amount"
+                  />
+                  <input
+                    type="text"
+                    value={withdrawalAmounts.vote ? "yes" : "no"}
+                    onChange={(e) => handleWithdrawalVoteChange(e)}
+                    className="w-24 px-2 py-1 text-sm bg-gray-700 rounded border border-gray-600 text-white"
+                    placeholder="yes/no"
+                  />
+                  <button 
+                    onClick={withdrawBet} 
+                    className="flex items-center gap-2 text-sm bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded transition-colors"
+                  >
+                    <ArrowDownToLine className="w-4 h-4" />
+                    Withdraw Bet
+                  </button>
+                </div>
               </div>
               <div className="grid grid-cols-3 gap-6 mb-4">
                 <div className="bg-gray-700/50 p-4 rounded-lg">

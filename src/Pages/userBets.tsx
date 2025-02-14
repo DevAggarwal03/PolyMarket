@@ -30,7 +30,7 @@ function UserBets() {
   console.log("All user bets:", data?.[0]);
   console.log("All questions:", data?.[1]);
 
-  const betsByUser : Bet[] = data ? (data[0].result as any[]).map((bet) => {
+  const betsByUser : Bet[] = data ? (data?.[0].result as any[])?.filter((bet) => !((bet.noVotes === bet.yesVotes) && (bet.yesVotes === BigInt(0)))).map((bet) => {
     const matchingQuestion = (data[1].result as any[]).find(
       (question) => question.id === bet.questionId
     );

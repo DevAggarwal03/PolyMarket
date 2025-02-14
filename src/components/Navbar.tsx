@@ -36,7 +36,7 @@ function Navbar() {
                       onClick={() => {}}
                       className={`px-3 py-2 rounded-md text-sm font-medium transition-colors`}
                     >
-                      <Link to={"/user"} className="flex items-center gap-2">
+                      <Link to={"/user"} className="flex text-white items-center gap-2">
                         <ListFilter className="w-4 h-4" />
                         Questions
                       </Link>
@@ -46,7 +46,7 @@ function Navbar() {
                       onClick={() => {}}
                       className={`px-3 py-2 rounded-md text-sm font-medium transition-colors`}
                     >
-                      <Link to={'/userbets'} className="flex items-center gap-2">
+                      <Link to={'/userbets'} className="flex text-white items-center gap-2">
                         <Wallet className="w-4 h-4" />
                         My Bets
                       </Link>
@@ -78,7 +78,7 @@ function Navbar() {
                 onClick={() => {}}
                 className={`w-full px-3 py-2 rounded-md text-sm font-medium transition-colors `}
               >
-                <Link to={"/user"} className="flex items-center gap-2">
+                <Link to={"/user"} className="flex text-white items-center gap-2">
                   <ListFilter className="w-4 h-4" />
                   Questions
                 </Link>
@@ -87,7 +87,7 @@ function Navbar() {
                 onClick={() => {}}
                 className={`w-full px-3 py-2 rounded-md text-sm font-medium transition-colors`}
               >
-                <Link to={'/userbets'} className="flex items-center gap-2">
+                <Link to={'/userbets'} className="flex text-white items-center gap-2">
                   <Wallet className="w-4 h-4" />
                   My Bets
                 </Link>
@@ -118,7 +118,7 @@ function Navbar() {
                       onClick={() => {}}
                       className={`px-3 py-2 rounded-md text-sm font-medium transition-colors`}
                     >
-                      <Link to={"/user"} className="flex items-center gap-2">
+                      <Link to={"/user"} className="flex text-white items-center gap-2">
                         <ListFilter className="w-4 h-4" />
                         Questions
                       </Link>
@@ -128,7 +128,7 @@ function Navbar() {
                       onClick={() => {}}
                       className={`px-3 py-2 rounded-md text-sm font-medium transition-colors`}
                     >
-                      <Link to={'/userbets'} className="flex items-center gap-2">
+                      <Link to={'/userbets'} className="flex text-white items-center gap-2">
                         <Wallet className="w-4 h-4" />
                         My Bets
                       </Link>
@@ -151,7 +151,7 @@ function Navbar() {
                 onClick={() => {}}
                 className={`w-full px-3 py-2 rounded-md text-sm font-medium transition-colors `}
               >
-                <Link to={"/user"} className="flex items-center gap-2">
+                <Link to={"/user"} className="flex text-white items-center gap-2">
                   <ListFilter className="w-4 h-4" />
                   Questions
                 </Link>
@@ -160,7 +160,7 @@ function Navbar() {
                 onClick={() => {}}
                 className={`w-full px-3 py-2 rounded-md text-sm font-medium transition-colors`}
               >
-                <Link to={'/userbets'} className="flex items-center gap-2">
+                <Link to={'/userbets'} className="flex text-white items-center gap-2">
                   <Wallet className="w-4 h-4" />
                   My Bets
                 </Link>

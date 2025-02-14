@@ -226,13 +226,13 @@ contract PredictionMarket {
         require(_amount > 0, "Amount must be greater than 0");
 
         Question storage question = idToQuestion[_questionId];
-        bool isWinningVote = questionToWinningOutcome[_questionId] == _vote;
-        require(isWinningVote, "Can only withdraw winning bets");
-
         uint256 totalPool = question.yesVotes + question.noVotes;
         uint256 winningPool = _vote ? question.yesVotes : question.noVotes;
 
         if (isQuestionResolved[_questionId]) {
+            bool isWinningVote = questionToWinningOutcome[_questionId] == _vote;
+            require(isWinningVote, "Can only withdraw winning bets");
+
             if(_vote == questionToWinningOutcome[_questionId]){
                 require(
                     addressToQuestionIdToAmt[msg.sender][_questionId]
