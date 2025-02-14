@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { Brain, TrendingUp, AlertCircle, ArrowDownToLine, BellRing } from 'lucide-react';
+import { ABI, contractAddress } from '../utils/contractDetails';
+import { useAccount, useReadContract } from 'wagmi';
 
 interface Prediction {
   id: number;
@@ -29,6 +31,7 @@ function Questions() {
 
   const [bets, setBets] = useState<Record<number, { yes: string; no: string }>>({});
   const [showAiAnalysis, setShowAiAnalysis] = useState<Record<number, boolean>>({});
+  const {address} = useAccount();
   
   const handleBetChange = (predictionId: number, type: 'yes' | 'no', value: string) => {
     setBets(prev => ({
@@ -39,6 +42,16 @@ function Questions() {
       }
     }));
   };
+
+  const {data: questions} = useReadContract({
+    address: contractAddress,
+    abi: ABI,
+    functionName: "getAllQuestions",
+    args: [],
+    account: address,
+  })
+
+  console.log(questions);
 
   const toggleAiAnalysis = (predictionId: number) => {
     setShowAiAnalysis(prev => ({

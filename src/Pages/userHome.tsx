@@ -1,35 +1,24 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Brain, TrendingUp, AlertCircle, ArrowDownToLine, Loader2} from 'lucide-react';
 import Navbar from '../components/Navbar';
 import { useAccount, useReadContract } from 'wagmi';
 import { ABI, contractAddress } from '../utils/contractDetails';
 import SubscribeButton from '../components/AgentButton';
+import { formatGwei } from 'viem';
 
 interface Prediction {
   id: number;
   question: string;
-  yesPool: number;
-  noPool: number;
-  aiAnalysis: string;
+  cryptoCurrency: string;
+  endTime: number;
+  isActive: boolean;
+  description: string;
+  yesVotes: number;
+  noVotes: number;
 }
 
 function Questions() {
-  const [predictions] = useState<Prediction[]>([
-    {
-      id: 1,
-      question: "Will Bitcoin reach $100,000 by the end of 2024?",
-      yesPool: 5000,
-      noPool: 3000,
-      aiAnalysis: "Based on current market trends and historical data, there's a 65% probability of this occurring."
-    },
-    {
-      id: 2,
-      question: "Will SpaceX successfully land on Mars in 2024?",
-      yesPool: 2000,
-      noPool: 8000,
-      aiAnalysis: "Technical challenges and timeline analysis suggest a 30% likelihood of success."
-    }
-  ]);
+  const [predictions, setPredictions] = useState<Prediction[] | []>([]);
 
   const [bets, setBets] = useState<Record<number, { yes: string; no: string }>>({});
   const [showAiAnalysis, setShowAiAnalysis] = useState<Record<number, boolean>>({});
@@ -60,7 +49,23 @@ function Questions() {
     }));
   };
 
-  
+  const {data: questions} = useReadContract({
+    address: contractAddress,
+    abi: ABI,
+    functionName: "getAllQuestions",
+    args: [],
+    account: address,
+  })
+
+  // if(questionsPending){
+  //   return <div className='flex justify-center bg-gray-900 text-gray-100 items-center w-screen h-screen'>
+  //     ...Loading
+  //   </div>
+  // }
+
+  // if(questionsSuccess){
+  //   setPredictions(questions as unknown as Prediction[]);
+  // }
 
   if(agentPending){
     return <div className='flex justify-center bg-gray-900 text-gray-100 items-center w-screen h-screen'>
@@ -84,15 +89,15 @@ function Questions() {
           </div>
   
           <div className="space-y-6">
-            {predictions.map(prediction => (
+            {(questions as unknown as Prediction[])?.map(prediction => (
               <div key={prediction.id} className="bg-gray-800 rounded-lg p-6 space-y-4">
                 <h2 className="text-xl font-semibold">{prediction.question}</h2>
                 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
-                      <span>Yes Pool: ${prediction.yesPool}</span>
-                      <span className="text-green-400">Odds: {((prediction.yesPool / (prediction.yesPool + prediction.noPool)) * 100).toFixed(1)}%</span>
+                      <span>Yes Pool: ${prediction.yesVotes}</span>
+                      <span className="text-green-400">Odds: {((parseInt(prediction.yesVotes.toString())  / (parseInt(prediction.yesVotes.toString()) + parseInt(prediction.noVotes.toString()))) * 100).toFixed(1)}%</span>
                     </div>
                     <div className="flex gap-2">
                       <input
@@ -109,8 +114,8 @@ function Questions() {
                   </div>
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
-                      <span>No Pool: ${prediction.noPool}</span>
-                      <span className="text-red-400">Odds: {((prediction.noPool / (prediction.yesPool + prediction.noPool)) * 100).toFixed(1)}%</span>
+                      <span>No Pool: ${prediction.noVotes}</span>
+                      <span className="text-red-400">Odds: {((parseInt(prediction.noVotes.toString()) / (parseInt(prediction.yesVotes.toString()) + parseInt(prediction.noVotes.toString()))) * 100).toFixed(1)}%</span>
                     </div>
                     <div className="flex gap-2">
                       <input
@@ -145,11 +150,12 @@ function Questions() {
                 {showAiAnalysis[prediction.id] && (
                   <div className="mt-4 bg-gray-700 p-4 rounded-lg flex items-start gap-3">
                     <AlertCircle className="w-5 h-5 text-purple-400 flex-shrink-0 mt-1" />
-                    <p className="text-sm text-gray-300">{prediction.aiAnalysis}</p>
+                    <p className="text-sm text-gray-300">ai analysis</p>
                   </div>
                 )}
               </div>
-            ))}
+            )
+            )}
           </div>
         </div>
       </div>
