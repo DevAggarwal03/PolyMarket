@@ -91,7 +91,7 @@ Our prediction market smart contracts are deployed on:
 - Sei Testnet: `0x89ebF2A7546eBD9407fb878821689f56612b4EFd`
 
 ## Links
-- Project Link: [https://github.com/yourusername/predictx](https://github.com/yourusername/predictx)
+- Live Link: [https://predicitonmarket.onrender.com](https://predicitonmarket.onrender.com)
 - Video Link: [https://youtu.be/37RwFLxlkpM](https://youtu.be/37RwFLxlkpM)
 - Github Link: [https://github.com/DevAggarwal03/predicitonMarket](https://github.com/DevAggarwal03/predicitonMarket)
 
