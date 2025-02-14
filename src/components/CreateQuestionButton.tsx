@@ -1,6 +1,6 @@
 import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { ABI, contractAddress } from "../utils/contractDetails";
-import { Loader2 } from "lucide-react";
+import { CloudCog, Loader2 } from "lucide-react";
 
 const CreateQuestionButton = ({newQuestion , setShowCreateModal} : any) => {
 
@@ -11,7 +11,7 @@ const CreateQuestionButton = ({newQuestion , setShowCreateModal} : any) => {
 
     const createQuestionHandler = () => {
         const date = new Date(newQuestion.endDate);
-        const unixTime = Math.floor(date.getTime() / 1000)
+        const unixTime = Math.floor(date.getTime()) - Date.now();
         console.log(unixTime)
         writeContract({
             abi: ABI,

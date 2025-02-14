@@ -40,6 +40,7 @@ contract PredictionMarket {
         uint256 noVotes; // Now represents total ETH bet on NO
         bool isActive;
         string cryptoCurrency;
+        uint256 targetPrice;
     }
 
     mapping(address => Agent) public userToAgent;
@@ -55,7 +56,8 @@ contract PredictionMarket {
         string question,
         string description,
         uint256 endTime,
-        string cryptoCurrency
+        string cryptoCurrency,
+        uint256 targetPrice
     );
     event VoteCasted(
         address indexed voter,
@@ -142,7 +144,7 @@ contract PredictionMarket {
             bytes(_question).length > 0 && bytes(_description).length > 0,
             "Question and description must not be empty"
         );
-        require(_endTime > block.timestamp, "End time must be in the future");
+        require(_endTime > 0, "End time must be in the future");
 
         totalQuestions++;
 
@@ -154,7 +156,8 @@ contract PredictionMarket {
             yesVotes: 1 * 10 ** 18,
             noVotes: 1 * 10 ** 18,
             isActive: true,
-            cryptoCurrency: _cryptoCurrency
+            cryptoCurrency: _cryptoCurrency,
+            targetPrice: _targetPrice
         });
 
         questionTargetPrices[totalQuestions] = _targetPrice;
@@ -163,7 +166,8 @@ contract PredictionMarket {
             _question,
             _description,
             _endTime,
-            _cryptoCurrency
+            _cryptoCurrency,
+            _targetPrice
         );
     }
 

@@ -96,7 +96,7 @@ function AdminDashboard() {
     return prediction.isActive === true ? selectedFilter === 'active' : selectedFilter === 'resolved';
   });
 
-  // console.log((questions as unknown as any[])[0].yesVotes )
+  // console.log( ((questions as unknown as any[])[0].endTime).toString() )
 
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100">
@@ -217,7 +217,7 @@ function AdminDashboard() {
                   <td className="py-4 px-6">{prediction.question}</td>
                   <td className="py-4 px-6">
                     <div className="flex items-center gap-2">
-                      <span>{new Date(parseInt(prediction.endTime.toString()) * 500).toLocaleString()}</span>
+                      <span>{new Date(parseInt(prediction.endTime.toString()) * 1000).toLocaleString()}</span>
                     </div>
                   </td>
                   <td className="py-4 px-6">

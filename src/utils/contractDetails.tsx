@@ -1,4 +1,4 @@
-export const contractAddress = "0xABA0351f21D196BFB149Af54A412C34C4cdcc3e5";
+export const contractAddress = "0x66BFc0dcFADf1591Bcc3b7224CAD01f2DcD4a346";
 export const ABI = [
   {
     "inputs": [],
@@ -75,6 +75,12 @@ export const ABI = [
         "internalType": "string",
         "name": "cryptoCurrency",
         "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "targetPrice",
+        "type": "uint256"
       }
     ],
     "name": "QuestionCreated",
@@ -257,6 +263,11 @@ export const ABI = [
             "internalType": "string",
             "name": "cryptoCurrency",
             "type": "string"
+          },
+          {
+            "internalType": "uint256",
+            "name": "targetPrice",
+            "type": "uint256"
           }
         ],
         "internalType": "struct PredictionMarket.Question[]",
@@ -348,6 +359,11 @@ export const ABI = [
         "internalType": "string",
         "name": "cryptoCurrency",
         "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "targetPrice",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
