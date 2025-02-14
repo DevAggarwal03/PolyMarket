@@ -1,19 +1,6 @@
-import React from 'react';
-import { TrendingUp, ArrowDownToLine, Brain, AlertCircle, ArrowUpRight, Clock } from 'lucide-react';
-import { formatEther, parseEther } from 'viem';
-
-// interface Bet {
-//   id: number;
-//   predictionId: number;
-//   question: string;
-//   betAmount: number;
-//   position: 'yes' | 'no';
-//   odds: number;
-//   potentialPayout: number;
-//   timestamp: string;
-//   status: 'active' | 'resolved' | 'withdrawn';
-//   aiAnalysis: string;
-// }
+import { TrendingUp, ArrowDownToLine,Clock } from 'lucide-react';
+import { formatEther } from 'viem';
+import Analysis from '../components/Analysis';
 
 export interface Bet {
   id: number;
@@ -23,27 +10,14 @@ export interface Bet {
   isActive: boolean;
   cryptoCurrency: string;
   targetPrice: number;
-  yesPool: number;
-  noPool: number;
+  yesVotes: number;
+  noVotes: number;
   userYesVotes: number;
   userNoVotes: number;
 }
 
 function MyBets({betsByUser}: {betsByUser: Bet[]}) {
-  // const {address} = useAccount();
-  const [showAiAnalysis, setShowAiAnalysis] = React.useState<Record<number, boolean>>({});
   console.log(betsByUser);
-
-  const toggleAiAnalysis = (betId: number) => {
-    setShowAiAnalysis(prev => ({
-      ...prev,
-      [betId]: !prev[betId]
-    }));
-  };
-  
-  // const formatDate = (dateString: bigint) => {
-  //   return new Date(Number(dateString));
-  // };
 
   const getStatusColor = (status: boolean) => {
     switch (status) {
@@ -56,14 +30,16 @@ function MyBets({betsByUser}: {betsByUser: Bet[]}) {
     }
   };
 
-  const calculatePotentialPayout = (betAmount: number, yesPool: number, noPool: number) => {
-    console.log(betAmount, yesPool, noPool);
-    const totalPool = yesPool + noPool;
-    const yesOdds = yesPool / totalPool;
-    const noOdds = noPool / totalPool;
-    const payout = yesOdds > noOdds ? betAmount * yesOdds : betAmount * noOdds;
-    console.log(payout);
-    return formatEther(payout as unknown as bigint);
+  const calculatePotentialPayout = (totalYes: number, totalNo: number, userYesTokens : number , userNoTokens : number) => {
+
+    console.log(totalNo)
+    console.log(totalYes)
+
+    const yesTokenValue = totalYes / (totalYes + totalNo);
+    const noTokenValue = totalNo / (totalYes + totalNo);
+
+    const payout = (userYesTokens * yesTokenValue) + (userNoTokens * noTokenValue);
+    return (payout / (10 ** 18)).toPrecision(2);
   }
 
   return (
@@ -116,34 +92,10 @@ function MyBets({betsByUser}: {betsByUser: Bet[]}) {
                 </div>
                 <div className="bg-gray-700/50 p-4 rounded-lg">
                   <div className="text-sm text-gray-400 mb-1">Potential Payout</div>
-                  {/* <div className="font-semibold text-purple-400">${calculatePotentialPayout(formatEther(((betsByUser[0].userYesVotes) + (betsByUser[0].userNoVotes)) as unknown as bigint), parseInt(bet.yesPool), parseInt(bet.noPool))}</div> */}
+                  <div className="font-semibold text-purple-400">${calculatePotentialPayout(parseInt(String(bet.yesVotes)), parseInt(String(bet.noVotes)),parseInt(String(bet.userYesVotes)),parseInt(String(bet.userNoVotes)))}</div>
                 </div>
               </div>
-
-              <div className="flex justify-between items-center pt-4 border-t border-gray-700">
-                <button 
-                  className="flex items-center gap-2 text-sm text-purple-400 hover:text-purple-300"
-                  onClick={() => toggleAiAnalysis(bet.id)}
-                >
-                  <Brain className="w-4 h-4" />
-                  {showAiAnalysis[bet.id] ? 'Hide AI Analysis' : 'Show AI Analysis'}
-                </button>
-                
-                <a 
-                  href={`/prediction/${bet.id}`}
-                  className="flex items-center gap-2 text-sm text-gray-400 hover:text-gray-300"
-                >
-                  <span>View Prediction</span>
-                  <ArrowUpRight className="w-4 h-4" />
-                </a>
-              </div>
-
-              {showAiAnalysis[bet.id] && (
-                <div className="mt-4 bg-gray-700 p-4 rounded-lg flex items-start gap-3">
-                  <AlertCircle className="w-5 h-5 text-purple-400 flex-shrink-0 mt-1" />
-                  {/* <p className="text-sm text-gray-300">{bet.aiAnalysis}</p> */}
-                </div>
-              )}
+              <Analysis id = {bet.id} target_price={bet.targetPrice} coin={bet.cryptoCurrency} date={bet.endTime}/>
             </div>
           ))}
         </div>

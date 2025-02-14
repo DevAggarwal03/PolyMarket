@@ -1,14 +1,24 @@
 import { useState } from "react";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Loader2 } from "lucide-react";
 import { Brain , ArrowDownToLine } from "lucide-react";
 import { useAccount, useReadContract } from "wagmi";
 import { ABI, contractAddress } from "../utils/contractDetails";
 import axios from "axios";
 
-const Analysis = ({id,coin, target_price , date} : any) => {
+const Analysis = ({id,coin, target_price , date} : {coin : string , id : number , target_price : number , date : number}) => {
     const [showAiAnalysis, setShowAiAnalysis] = useState<Record<number, boolean>>({});
 
     const {address} = useAccount();
+
+    const mapping = {
+        'BTC' : 'bitcoin',
+        'ETH' : 'ethereum',
+        'SOL' : 'solana',
+        'SEI' : 'sei'
+    }
+
+    const [probability , setProbability] = useState<null | number>(null);
+    const [loading, setLoading] = useState<boolean>(false)
 
     const {data , isPending , isSuccess} = useReadContract({
         abi : ABI,
@@ -18,8 +28,14 @@ const Analysis = ({id,coin, target_price , date} : any) => {
     });
 
     const predictionByAI = async() => {
-        const res = await axios.get(`http://127.0.0.1:5000/predict?coin_id=${coin}&target_price=${target_price}&target_date=${date}`)
-        console.log(res.data)
+        setLoading(true)
+        // @ts-ignore
+        coin = mapping[coin.split('/')[0]]
+        console.log(parseInt(String(target_price)));
+        const res = await axios.get(`http://127.0.0.1:5000/predict?coin_id=${coin}&target_price=${target_price}&target_date=2025-03-01`)
+        console.log(res.data.probability_score)
+        setProbability(res.data.probability_score * 100);
+        setLoading(false);
     }
 
     const toggleAiAnalysis = async(predictionId: number) => {
@@ -54,7 +70,9 @@ const Analysis = ({id,coin, target_price , date} : any) => {
         {showAiAnalysis[id] && (
             <div className="mt-4 bg-gray-700 p-4 rounded-lg flex items-start gap-3">
                 <AlertCircle className="w-5 h-5 text-purple-400 flex-shrink-0 mt-1" />
-                <p className="text-sm text-gray-300">ai analysis</p>
+                {
+                    loading ? (<p className="text-sm text-gray-300">loading</p>) : (<p className="text-sm text-gray-300">According to my analysis based on the past 60 days , probabilty of happening is : {probability}</p>)
+                }
             </div>
         )}
     </div>

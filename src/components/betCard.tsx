@@ -3,6 +3,7 @@ import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { ABI, contractAddress } from "../utils/contractDetails";
 import { formatEther, parseEther } from "viem";
 import Analysis from "./Analysis";
+import { Loader2 } from "lucide-react";
 
 const BetCard = ({ prediction }: any) => {
 
@@ -12,27 +13,27 @@ const BetCard = ({ prediction }: any) => {
     const [nobets, setNoBets] = useState<number>(0);
 
     const { writeContract, isPending, data: hash } = useWriteContract({});
-    // const { isLoading, isSuccess } = useWaitForTransactionReceipt({ hash })
+    const { isLoading, isSuccess } = useWaitForTransactionReceipt({ hash })
 
     const noBetHandler = () => {
         if(nobets <= 0){
-            console.log("amount should atleast be one")
+            console.log("Enter a amount greater than 0")
             return 
         }
         writeContract({
             abi: ABI,
             address: contractAddress,
-            functionName: "",
+            functionName: "vote",
             args: [parseInt(prediction.id),false],
             value : parseEther(String(nobets))
         })
     }
 
     const yesBetHandler = () => {
-        // if(yesbets <= 0){
-        //     console.log("amount should atleast be one")
-        //     return 
-        // }
+        if(yesbets <= 0) {
+            console.log("Enter a amount greater than 0")
+            return;
+        }
         console.log("hi there ")
         writeContract({
             abi: ABI,
@@ -61,7 +62,9 @@ const BetCard = ({ prediction }: any) => {
                         onChange={(e) => setYesBets(parseFloat(e.target.value))}
                     />
                     <button className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded transition-colors" onClick={() => yesBetHandler()}>
-                        Bet Yes
+                        {
+                            isLoading ? (<div><Loader2/></div>) : (<div>Bet Yes</div>)
+                        }
                     </button>
                 </div>
             </div>
@@ -76,10 +79,12 @@ const BetCard = ({ prediction }: any) => {
                         placeholder="Bet amount for No"
                         className="flex-1 bg-gray-700 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
                         value={nobets}
-                        onChange={(e) => setNoBets(parseInt(e.target.value))}
+                        onChange={(e) => setNoBets(parseFloat(e.target.value))}
                     />
                     <button className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded transition-colors" onClick={() => noBetHandler()}>
-                        Bet No
+                        {
+                            isLoading ? (<div><Loader2/></div>) : (<div>Bet No</div>)
+                        }
                     </button>
                 </div>
             </div>
