@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { TrendingUp, Plus, X, Filter, Search, Calendar, DollarSign, Users, Activity, CheckCircle2, Clock, AlertTriangle } from 'lucide-react';
+import { useWaitForTransactionReceipt, useWriteContract } from 'wagmi';
+import { ABI, contractAddress } from '../utils/contractDetails';
+import CreateQuestionButton from '../components/CreateQuestionButton';
 
 interface Prediction {
   id: number;
@@ -11,49 +14,20 @@ interface Prediction {
   noPool: number;
   totalBets: number;
   resolution?: 'yes' | 'no';
+  cryptoCurrency : string
 }
 
 function AdminDashboard() {
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [predictions] = useState<Prediction[]>([
-    {
-      id: 1,
-      question: "Will Bitcoin reach $100,000 by the end of 2024?",
-      startDate: "2024-03-01",
-      endDate: "2024-12-31",
-      status: 'active',
-      yesPool: 5000,
-      noPool: 3000,
-      totalBets: 45
-    },
-    {
-      id: 2,
-      question: "Will SpaceX successfully land on Mars in 2024?",
-      startDate: "2024-01-15",
-      endDate: "2024-12-31",
-      status: 'active',
-      yesPool: 2000,
-      noPool: 8000,
-      totalBets: 67
-    },
-    {
-      id: 3,
-      question: "Will Apple release a foldable iPhone in 2024?",
-      startDate: "2024-02-01",
-      endDate: "2024-03-15",
-      status: 'resolved',
-      yesPool: 1500,
-      noPool: 4500,
-      totalBets: 32,
-      resolution: 'no'
-    }
-  ]);
+  const [predictions] = useState<Prediction[]>([]);
 
   const [newQuestion, setNewQuestion] = useState({
     question: '',
     startDate: '',
     endDate: '',
-    description: ''
+    description: '',
+    cryptoCurrency : '',
+    targetPrice : '',
   });
 
   const [selectedFilter, setSelectedFilter] = useState('all');
@@ -99,10 +73,13 @@ function AdminDashboard() {
       question: '',
       startDate: '',
       endDate: '',
-      description: ''
+      description: '',
+      cryptoCurrency : '',
+      targetPrice  : ''
     });
   };
 
+  
   const filteredPredictions = predictions.filter(prediction => {
     if (selectedFilter === 'all') return true;
     return prediction.status === selectedFilter;
@@ -289,17 +266,33 @@ function AdminDashboard() {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-400 mb-1">
-                      Start Date
-                    </label>
-                    <input
-                      type="date"
-                      value={newQuestion.startDate}
-                      onChange={(e) => setNewQuestion({ ...newQuestion, startDate: e.target.value })}
-                      className="w-full bg-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                      required
-                    />
+                  <label className="block text-sm font-medium text-gray-400 mb-1">
+                    CryptoCurrency
+                  </label>
+                  <input
+                    type="text"
+                    value={newQuestion.cryptoCurrency}
+                    onChange={(e) => setNewQuestion({ ...newQuestion, cryptoCurrency: e.target.value })}
+                    className="w-full bg-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    placeholder="Enter your CryptoCurrency"
+                    required
+                  />
                   </div>
+                  <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">
+                    TargetPrice
+                  </label>
+                  <input
+                    type="number"
+                    value={newQuestion.targetPrice}
+                    onChange={(e) => setNewQuestion({ ...newQuestion, targetPrice: e.target.value })}
+                    className="w-full bg-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    placeholder="Enter your targetPrice"
+                    required
+                  />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-400 mb-1">
                       End Date
@@ -332,12 +325,7 @@ function AdminDashboard() {
                   >
                     Cancel
                   </button>
-                  <button
-                    type="submit"
-                    className="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg transition-colors"
-                  >
-                    Create Question
-                  </button>
+                  <CreateQuestionButton newQuestion = {newQuestion} setShowCreateModal = {setShowCreateModal}/>
                 </div>
               </div>
             </form>

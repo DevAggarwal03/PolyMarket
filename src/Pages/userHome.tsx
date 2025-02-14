@@ -40,7 +40,7 @@ function Questions() {
     abi : ABI,
     address : contractAddress,
     functionName : "isSubscribed",
-    args : [address]
+    account : address
   })
   
   const handleBetChange = (predictionId: number, type: 'yes' | 'no', value: string) => {
