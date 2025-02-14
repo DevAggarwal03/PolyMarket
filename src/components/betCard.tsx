@@ -1,8 +1,8 @@
-import { Brain, ArrowDownToLine, AlertCircle } from "lucide-react"
 import { useState } from "react";
 import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { ABI, contractAddress } from "../utils/contractDetails";
 import { formatEther, parseEther } from "viem";
+import Analysis from "./Analysis";
 
 const BetCard = ({ prediction }: any) => {
 
@@ -10,27 +10,9 @@ const BetCard = ({ prediction }: any) => {
 
     const [yesbets, setYesBets] = useState<number>(0);
     const [nobets, setNoBets] = useState<number>(0);
-    const [showAiAnalysis, setShowAiAnalysis] = useState<Record<number, boolean>>({});
 
     const { writeContract, isPending, data: hash } = useWriteContract({});
-    const { isLoading, isSuccess } = useWaitForTransactionReceipt({ hash })
-
-    // const handleBetChange = (predictionId: number, type: 'yes' | 'no', value: string) => {
-    //     setBets(prev => ({
-    //         ...prev,
-    //         [predictionId]: {
-    //             ...(prev[predictionId] || { yes: '', no: '' }),
-    //             [type]: value
-    //         }
-    //     }));
-    // };
-
-    const toggleAiAnalysis = (predictionId: number) => {
-        setShowAiAnalysis(prev => ({
-            ...prev,
-            [predictionId]: !prev[predictionId]
-        }));
-    };
+    // const { isLoading, isSuccess } = useWaitForTransactionReceipt({ hash })
 
     const noBetHandler = () => {
         if(nobets <= 0){
@@ -102,28 +84,7 @@ const BetCard = ({ prediction }: any) => {
                 </div>
             </div>
         </div>
-
-        <div className="flex justify-between items-center pt-4 border-t border-gray-700">
-            <button
-                className="flex items-center gap-2 text-sm text-purple-400 hover:text-purple-300"
-                onClick={() => toggleAiAnalysis(prediction.id)}
-            >
-                <Brain className="w-4 h-4" />
-                {showAiAnalysis[prediction.id] ? 'Hide AI Analysis' : 'Show AI Analysis'}
-            </button>
-
-            <button className="flex items-center gap-2 text-sm bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded transition-colors">
-                <ArrowDownToLine className="w-4 h-4" />
-                Withdraw Bet
-            </button>
-        </div>
-
-        {showAiAnalysis[prediction.id] && (
-            <div className="mt-4 bg-gray-700 p-4 rounded-lg flex items-start gap-3">
-                <AlertCircle className="w-5 h-5 text-purple-400 flex-shrink-0 mt-1" />
-                <p className="text-sm text-gray-300">ai analysis</p>
-            </div>
-        )}
+        <Analysis id = {prediction.id} coin = {prediction.cryptoCurrency} date = {prediction.endTime} target_price = {prediction.targetPrice}/>
     </div>
 }
 
