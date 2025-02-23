@@ -8,5 +8,9 @@ module.exports = {
       url: "https://evm-rpc-testnet.sei-apis.com",
       accounts: [process.env.PRIVATE_KEY],
     },
+    sonicTestnet: {
+      url: "https://rpc.blaze.soniclabs.com",
+      accounts: [process.env.PRIVATE_KEY]
+    }
   },
 };

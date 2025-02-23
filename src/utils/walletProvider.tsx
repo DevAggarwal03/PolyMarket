@@ -9,11 +9,12 @@ import {
   QueryClientProvider,
   QueryClient,
 } from "@tanstack/react-query";
+import { sonicBlazeTestnet } from './chainConfig';
 
 const config = getDefaultConfig({
   appName: 'My RainbowKit App',
   projectId: 'YOUR_PROJECT_ID',
-  chains: [seiTestnet],
+  chains: [seiTestnet, sonicBlazeTestnet],
   ssr: false, 
 });
 
